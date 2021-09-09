@@ -1,4 +1,4 @@
-using ArduinoSerial
+using SerialCOBS
 using Test
 
 # %%  Verify the
@@ -6,7 +6,7 @@ a = rand(UInt8, 6)
 @test decode(encode(a)) == a
 
 # %%
-ard = Arduino("/dev/tty.usbmodem14201", 9600);
+ard = Arduino("/dev/tty.usbmodem14101", 9600);
 
 # %%
 @testset "Opening/Closing Port" begin

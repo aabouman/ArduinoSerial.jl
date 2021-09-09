@@ -1,5 +1,15 @@
-using ArduinoSerial
+using SerialCOBS
 using Printf
+using Test
+
+# %%
+test_message = rand(UInt8, 25)
+ard = Main.SerialCOBS.Arduino("/dev/tty.usbmodem14201", 57600)
+
+encoded_msg = Main.SerialCOBS.encode(ard, test_message)
+decoded_msg = Main.SerialCOBS.decode(ard, encoded_msg)
+
+@test decoded_msg == test_message
 
 # %%
 HOLYBRO_BAUDRATE = 57600
