@@ -83,7 +83,7 @@ function Base.readuntil(ard::Arduino, delim)
     read_into_buffer!(ard)
     last_ind = findfirst(x -> x==delim, ard.read_buffer)
 
-    if istype(last_ind, Int64)
+    if last_ind isa Int64
         return view(ard.read_buffer, 1:last_ind)
     else
         return ard.read_buffer
