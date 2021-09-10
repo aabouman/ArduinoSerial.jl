@@ -1,4 +1,7 @@
 module SerialCOBS
+    using LibSerialPort
+    using StaticArrays
+
     include("Arduino.jl")
     include("COBS.jl")
 
@@ -6,7 +9,7 @@ module SerialCOBS
     export message, recieve
     export encode, decode
 
-    function message(ard::Arduino, msg::Vector{UInt8})
+    function message(ard::Arduino, msg::AbstractVector{UInt8})
         encoded_msg = encode(ard, msg)
         status = write(ard, encoded_msg)
 

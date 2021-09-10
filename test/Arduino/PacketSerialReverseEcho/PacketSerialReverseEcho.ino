@@ -70,7 +70,7 @@ void onPacketReceived(const uint8_t *buffer, size_t size)
     memcpy(tempBuffer, buffer, size);
 
     // Reverse our temporaray buffer.
-    reverse(tempBuffer, size);
+    // reverse(tempBuffer, size);
 
     // Send the reversed buffer back to the sender. The send() method will encode
     // the whole buffer as as single packet, set packet markers, etc.
