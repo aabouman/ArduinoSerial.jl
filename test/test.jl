@@ -1,8 +1,90 @@
+using Revise
 using SerialCOBS
+using ProtoBuf
 using Printf
 using Test
+using BenchmarkTools
+
+include("$(@__DIR__)/msgs/imu_msg_pb.jl")
+imu = IMU(acc_x=0., acc_y=0., acc_z=0.,
+          gyr_x=0., gyr_y=0., gyr_z=0.,
+          time=time())
+in_vicon = VICON(pos_x=0., pos_y=0., pos_z=0.,
+                 quat_w=0., quat_x=0., quat_y=0., quat_z=0.,
+                 time=time())
+imu_vicon = IMU_VICON(imu=imu, vicon=in_vicon)
+
+ard = Arduino("/dev/tty.usbmodem92225501", 57600);
+
+out_vicon = VICON(pos_x=0., pos_y=0., pos_z=0.,
+                  quat_w=0., quat_x=0., quat_y=0., quat_z=0.,
+                  time=time())
+holybro = Arduino("/dev/tty.usbmodem14201", 57600);
+
+
+# %% Benchmark recieve
+open(ard)
+results = @benchmark recieve!($ard, $imu_vicon)
+close(ard)
+display(results)
+
+
+# %% Benchmark message
+open(holybro)
 
 # %%
+message(holybro, out_vicon)
+
+# %%
+try
+    for i in 1:1000
+        message(holybro, out_vicon)
+        sleep(0.0001)
+    end
+catch
+    close(holybro)
+end
+
+# %%
+
+open(holybro) do sp
+    message(ard, out_vicon)
+end
+# close(holybro)
+
+# %%
+decoded_msg = 0
+encoded_msg = 0
+cnt = 0
+
+open(ard)
+    start_time = time()
+# results = @benchmark begin
+    for i in 1:100000
+        encoded_msg = SerialCOBS.retrieve_encoded_msg(ard)
+        if encoded_msg !== nothing
+            decoded_msg = decode(ard, encoded_msg)
+            readproto(IOBuffer(decoded_msg), imu_vicon)
+
+            cnt += 1
+            # @printf("IMU accel: \t[%1.3f, %1.3f, %1.3f]\n",
+            #         imu_vicon.imu.acc_x, imu_vicon.imu.acc_y, imu_vicon.imu.acc_z)
+            # @printf("Vicon pos: \t[%1.3f, %1.3f, %1.3f]\n",
+            #         imu_vicon.vicon.pos_x, imu_vicon.vicon.pos_x, imu_vicon.vicon.pos_x)
+        end
+    end
+end_time = time()
+
+# end
+close(ard)
+
+println(cnt/(end_time - start_time))
+
+# display(results)
+
+
+
+# %% Begin Testing here
 @testset "Encode/Decode Are Inverse Functions" begin
     test_message1 = rand(UInt8, 25)
     ard = Main.SerialCOBS.Arduino("/dev/tty.usbmodem14201", 57600)
