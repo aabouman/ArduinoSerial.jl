@@ -5,7 +5,7 @@ module SerialCOBS
     include("Arduino.jl")
     include("COBS.jl")
 
-    export Arduino, bytesavailable
+    export Arduino, messageBytesAvailable
     export message, recieve
     export encode, decode
 

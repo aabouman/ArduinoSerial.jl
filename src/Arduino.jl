@@ -64,6 +64,12 @@ function Base.bytesavailable(ard::Arduino)
     return bytesavailable(ard.sp)
 end
 
+function messageBytesAvailable(ard::Arduino)
+    isopen(ard) || error(failed_to_open_str)
+
+    return bytesavailable(ard) - 2
+end
+
 # function Base.read!(ard::Arduino, array::AbstractVector{UInt8})
 function read_into_buffer!(ard::Arduino)
     isopen(ard) || error(failed_to_open_str)
