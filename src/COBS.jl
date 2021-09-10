@@ -57,7 +57,7 @@ function decode(ard::Arduino, msg::AbstractVector{UInt8})
     b = msg[pop_ind]
     pop_ind += 1
 
-    while b ≠ 0x00
+    while b ≠ 0x00 && pop_ind <= 256 && push_ind <= 256
         c += 1
         if c < n
             ard.msg_in_buffer[push_ind] = b
