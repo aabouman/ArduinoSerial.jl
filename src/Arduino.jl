@@ -65,7 +65,7 @@ function Base.bytesavailable(ard::Arduino)
 end
 
 # function Base.read!(ard::Arduino, array::AbstractVector{UInt8})
-function Base.read_into_buffer!(ard::Arduino)
+function read_into_buffer!(ard::Arduino)
     isopen(ard) || error(failed_to_open_str)
 
     # if Base.bytesavailable(ard) <= 256

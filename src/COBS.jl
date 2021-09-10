@@ -42,7 +42,7 @@ end
 Zero allocation decoding of message block.
 """
 function decode(ard::Arduino, msg::AbstractVector{UInt8})
-    length(payload) == 0 && error("empty_message_str")
+    length(msg) == 0 && error("empty_message_str")
     length(msg) > 256 && error(big_message_str)
 
     push_ind = 1

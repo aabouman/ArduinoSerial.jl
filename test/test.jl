@@ -9,7 +9,7 @@ using Test
 
     encoded_msg1 = Main.SerialCOBS.encode(ard, test_message1)
     decoded_msg1 = Main.SerialCOBS.decode(ard, encoded_msg1)
-    @test decoded_msg == test_message
+    @test decoded_msg1 == test_message1
 
     # Large message size
     test_message2 = rand(UInt8, 254)
@@ -17,7 +17,7 @@ using Test
 
     encoded_msg2 = Main.SerialCOBS.encode(ard, test_message2)
     decoded_msg2 = Main.SerialCOBS.decode(ard, encoded_msg2)
-    @test decoded_msg == test_message
+    @test decoded_msg2 == test_message2
 end
 
 
@@ -44,13 +44,16 @@ end
 
     open(ard) do sp
         message(ard, input)
-        while true
+        for i in 1:1000
             # Wait for the arudino to echo back with the reversed message
             if bytesavailable(ard) > 0
                 output = recieve(ard)
                 break
             end
+            sleep(0.01)
+            i == 1000 ? error("Is arduino running PacketSerialEcho.ino connected to port $(ard.portname)?") : nothing
         end
+
     end
     @test isequal(input, output)
 
